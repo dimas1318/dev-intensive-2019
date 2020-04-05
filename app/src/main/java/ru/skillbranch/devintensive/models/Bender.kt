@@ -12,20 +12,16 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
     }
 
     private fun checkAnswer(answer: String): String {
-        when {
-            question.answers.contains(answer) -> {
-                question = question.nextQuestion()
-                return "Отлично - ты справился"
-            }
-            else -> {
-                if (status == Status.CRITICAL) {
-                    resetStates()
-                    return "Это неправильный ответ. Давай все по новой"
-                }
-                else {
-                    status = status.nextStatus()
-                    return "Это неправильный ответ"
-                }
+        return if (question.answers.contains(answer)) {
+            question = question.nextQuestion()
+            "Отлично - ты справился"
+        } else {
+            if (status == Status.CRITICAL) {
+                resetStates()
+                "Это неправильный ответ. Давай все по новой"
+            } else {
+                status = status.nextStatus()
+                "Это неправильный ответ"
             }
         }
     }

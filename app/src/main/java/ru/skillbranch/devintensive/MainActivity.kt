@@ -11,7 +11,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import ru.skillbranch.devintensive.extensions.hideKeyboard
 import ru.skillbranch.devintensive.models.Bender
 import ru.skillbranch.devintensive.models.Bender.Question
 
@@ -67,7 +66,6 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             } else {
                 makeErrorMessage()
             }
-            hideKeyboard()
         }
     }
 
