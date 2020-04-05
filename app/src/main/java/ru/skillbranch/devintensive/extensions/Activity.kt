@@ -9,7 +9,8 @@ import kotlin.math.roundToLong
 
 fun Activity.hideKeyboard() {
     val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+    val view = currentFocus ?: View(this)
+    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
 fun Activity.isKeyboardOpen(): Boolean {
