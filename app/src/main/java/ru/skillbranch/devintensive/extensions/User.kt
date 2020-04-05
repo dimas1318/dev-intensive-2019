@@ -10,7 +10,7 @@ fun User.toUserView(): UserView {
     val status = when {
         lastVisit == null -> "Еще не разу не был"
         isOnline -> "online"
-        else -> "Последний раз был ${lastVisit.humanizeDiff()}"
+        else -> "Последний раз был ${lastVisit!!.humanizeDiff()}"
     }
 
     return UserView(
