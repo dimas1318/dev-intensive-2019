@@ -1,6 +1,5 @@
 package ru.skillbranch.devintensive.extensions
 
-import ru.skillbranch.devintensive.extensions.TimeUnits.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.abs
@@ -10,7 +9,7 @@ fun Date.format(pattern: String = "HH:mm:ss dd.MM.yy"): String {
     return dateFormat.format(this)
 }
 
-fun Date.add(value: Int, units: TimeUnits = SECOND): Date {
+fun Date.add(value: Int, units: TimeUnits = TimeUnits.SECOND): Date {
     this.time += units.value * value
     return this
 }
@@ -20,14 +19,23 @@ fun Date.humanizeDiff(date: Date = Date()): String {
     val isPast = this.time < date.time
 
     return when {
-        dif <= SECOND.value -> "только что"
-        dif <= SECOND.value * 45 -> getTenseForm("несколько секунд", isPast)
-        dif <= SECOND.value * 75 -> getTenseForm("минуту", isPast)
-        dif <= MINUTE.value * 45 -> getTenseForm(MINUTE.plural((dif / MINUTE.value).toInt()), isPast)
-        dif <= MINUTE.value * 75 -> getTenseForm("час", isPast)
-        dif <= HOUR.value * 22 -> getTenseForm(HOUR.plural((dif / HOUR.value).toInt()), isPast)
-        dif <= HOUR.value * 26 -> getTenseForm("день", isPast)
-        dif <= DAY.value * 360 -> getTenseForm(DAY.plural((dif / DAY.value).toInt()), isPast)
+        dif <= TimeUnits.SECOND.value -> "только что"
+        dif <= TimeUnits.SECOND.value * 45 -> getTenseForm("несколько секунд", isPast)
+        dif <= TimeUnits.SECOND.value * 75 -> getTenseForm("минуту", isPast)
+        dif <= TimeUnits.MINUTE.value * 45 -> getTenseForm(
+            TimeUnits.MINUTE.plural((dif / TimeUnits.MINUTE.value).toInt()),
+            isPast
+        )
+        dif <= TimeUnits.MINUTE.value * 75 -> getTenseForm("час", isPast)
+        dif <= TimeUnits.HOUR.value * 22 -> getTenseForm(
+            TimeUnits.HOUR.plural((dif / TimeUnits.HOUR.value).toInt()),
+            isPast
+        )
+        dif <= TimeUnits.HOUR.value * 26 -> getTenseForm("день", isPast)
+        dif <= TimeUnits.DAY.value * 360 -> getTenseForm(
+            TimeUnits.DAY.plural((dif / TimeUnits.DAY.value).toInt()),
+            isPast
+        )
         else -> if (isPast) "более года назад" else "более чем через год"
     }
 }
@@ -61,10 +69,10 @@ enum class Plurals(
 
     fun get(unit: TimeUnits): String {
         return when (unit) {
-            SECOND -> second
-            MINUTE -> minute
-            HOUR -> hour
-            DAY -> day
+            TimeUnits.SECOND -> second
+            TimeUnits.MINUTE -> minute
+            TimeUnits.HOUR -> hour
+            TimeUnits.DAY -> day
         }
     }
 }
