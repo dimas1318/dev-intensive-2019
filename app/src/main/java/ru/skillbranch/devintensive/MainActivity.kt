@@ -3,13 +3,13 @@ package ru.skillbranch.devintensive
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.text.InputType
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.skillbranch.devintensive.models.Bender
 import ru.skillbranch.devintensive.models.Bender.Question
@@ -43,10 +43,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         sendBtn.setOnClickListener(this)
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
+    override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState?.putString("STATUS", benderObj.status.name)
-        outState?.putString("QUESTION", benderObj.question.name)
+        outState.putString("STATUS", benderObj.status.name)
+        outState.putString("QUESTION", benderObj.question.name)
     }
 
     private fun makeSendOnActionDone(editText: EditText) {
