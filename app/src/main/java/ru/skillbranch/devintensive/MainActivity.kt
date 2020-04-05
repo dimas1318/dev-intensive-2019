@@ -3,13 +3,13 @@ package ru.skillbranch.devintensive
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.text.InputType
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import ru.skillbranch.devintensive.models.Bender
 import ru.skillbranch.devintensive.models.Bender.Question
@@ -43,19 +43,30 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         sendBtn.setOnClickListener(this)
     }
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putString("STATUS", benderObj.status.name)
+        outState?.putString("QUESTION", benderObj.question.name)
+    }
+
     private fun makeSendOnActionDone(editText: EditText) {
         editText.setRawInputType(InputType.TYPE_CLASS_TEXT)
         editText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) sendBtn.performClick()
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                sendBtn.performClick()
+            }
             false
         }
     }
 
     override fun onClick(v: View?) {
-        if (v?.id == R.id.iv_send)
-            if (isAnswerValid())
+        if (v?.id == R.id.iv_send) {
+            if (isAnswerValid()) {
                 sendAnswer()
-            else makeErrorMessage()
+            } else {
+                makeErrorMessage()
+            }
+        }
     }
 
     private fun makeErrorMessage() {
@@ -67,13 +78,11 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             Question.SERIAL -> "Серийный номер содержит только цифры, и их 7"
             else -> "На этом все, вопросов больше нет"
         }
-        textTxt.text = errorMessage + "\n" + benderObj.question.question
+        textTxt.text = "$errorMessage\n${benderObj.question.question}"
         messageEt.setText("")
     }
 
-    private fun isAnswerValid(): Boolean {
-        return benderObj.question.validate(messageEt.text.toString())
-    }
+    private fun isAnswerValid() = benderObj.question.validate(messageEt.text.toString())
 
     private fun sendAnswer() {
         val (phase, color) = benderObj.listenAnswer(messageEt.text.toString().toLowerCase())
@@ -81,11 +90,5 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         val (r, g, b) = color
         benderImage.setColorFilter(Color.rgb(r, g, b), PorterDuff.Mode.MULTIPLY)
         textTxt.text = phase
-    }
-
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        outState?.putString("STATUS", benderObj.status.name)
-        outState?.putString("QUESTION", benderObj.question.name)
     }
 }

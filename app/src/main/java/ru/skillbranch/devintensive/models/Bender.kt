@@ -1,29 +1,31 @@
 package ru.skillbranch.devintensive.models
 
-class Bender (var status: Status = Status.NORMAL, var question: Question = Question.NAME){
+class Bender(var status: Status = Status.NORMAL, var question: Question = Question.NAME) {
 
-    fun askQuestion():String = question.question
+    fun askQuestion(): String = question.question
 
-    fun listenAnswer(answer:String):Pair<String, Triple<Int, Int, Int>>{
-        return when(question){
+    fun listenAnswer(answer: String): Pair<String, Triple<Int, Int, Int>> {
+        return when (question) {
             Question.IDLE -> question.question to status.color
             else -> "${checkAnswer(answer)}\n${question.question}" to status.color
         }
     }
 
     private fun checkAnswer(answer: String): String {
-        return if (question.answer.contains(answer)) {
-            question = question.nextQuestion()
-            "Отлично - ты справился"
-        }
-        else {
-            if (status == Status.CRITICAL){
-                resetStates()
-                "Это неправильный ответ. Давай все по новой"
+        when {
+            question.answers.contains(answer) -> {
+                question = question.nextQuestion()
+                return "Отлично - ты справился"
             }
-            else{
-                status = status.nextStatus()
-                "Это неправильный ответ"
+            else -> {
+                if (status == Status.CRITICAL) {
+                    resetStates()
+                    return "Это неправильный ответ. Давай все по новой"
+                }
+                else {
+                    status = status.nextStatus()
+                    return "Это неправильный ответ"
+                }
             }
         }
     }
@@ -33,46 +35,53 @@ class Bender (var status: Status = Status.NORMAL, var question: Question = Quest
         question = Question.NAME
     }
 
-    enum class Status(val color: Triple<Int, Int, Int>){
+    enum class Status(val color: Triple<Int, Int, Int>) {
         NORMAL(Triple(255, 255, 255)),
         WARNING(Triple(255, 120, 0)),
         DANGER(Triple(255, 60, 60)),
         CRITICAL(Triple(255, 0, 0));
 
-        fun nextStatus(): Status{
-            return if (this.ordinal < values().lastIndex)
+        fun nextStatus(): Status {
+            return if (this.ordinal < values().lastIndex) {
                 values()[this.ordinal + 1]
-            else values()[0]
+            } else {
+                values()[0]
+            }
         }
     }
 
-    enum class Question(val question: String, val answer: List<String>){
+    enum class Question(val question: String, val answers: List<String>) {
         NAME("Как меня зовут?", listOf("бендер", "bender")) {
             override fun nextQuestion(): Question = PROFESSION
-            override fun validate(answer: String): Boolean = answer.trim().firstOrNull()?.isUpperCase() ?: false
+            override fun validate(answer: String): Boolean =
+                answer.trim().firstOrNull()?.isUpperCase() ?: false
         },
-        PROFESSION("Назови мою профессию?", listOf("сгибальщик", "bender")){
+        PROFESSION("Назови мою профессию?", listOf("сгибальщик", "bender")) {
             override fun nextQuestion(): Question = MATERIAL
-            override fun validate(answer: String): Boolean = answer.trim().firstOrNull()?.isLowerCase() ?: false
+            override fun validate(answer: String): Boolean =
+                answer.trim().firstOrNull()?.isLowerCase() ?: false
         },
-        MATERIAL("Из чего я сделан?", listOf("металл", "дерево", "iron", "wood", "metal")){
+        MATERIAL("Из чего я сделан?", listOf("металл", "дерево", "iron", "wood", "metal")) {
             override fun nextQuestion(): Question = BDAY
-            override fun validate(answer: String): Boolean = answer.trim().contains(Regex("\\d")).not()
+            override fun validate(answer: String): Boolean =
+                answer.trim().contains(Regex("\\d")).not()
         },
-        BDAY("Когда меня создали?", listOf("2993")){
+        BDAY("Когда меня создали?", listOf("2993")) {
             override fun nextQuestion(): Question = SERIAL
-            override fun validate(answer: String): Boolean = answer.trim().contains(Regex("^[0-9]*$"))
+            override fun validate(answer: String): Boolean =
+                answer.trim().contains(Regex("^[0-9]*$"))
         },
-        SERIAL("Мой серийный номер?", listOf("2716057")){
+        SERIAL("Мой серийный номер?", listOf("2716057")) {
             override fun nextQuestion(): Question = IDLE
-            override fun validate(answer: String): Boolean = answer.trim().contains(Regex("^[0-9]{7}$"))
+            override fun validate(answer: String): Boolean =
+                answer.trim().contains(Regex("^[0-9]{7}$"))
         },
-        IDLE("На этом все, вопросов больше нет", listOf()){
+        IDLE("На этом все, вопросов больше нет", listOf()) {
             override fun nextQuestion(): Question = IDLE
             override fun validate(answer: String): Boolean = true
         };
 
-        abstract fun nextQuestion():Question
-        abstract fun validate(answer: String):Boolean
+        abstract fun nextQuestion(): Question
+        abstract fun validate(answer: String): Boolean
     }
 }
