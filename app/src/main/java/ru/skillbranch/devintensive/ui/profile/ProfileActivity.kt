@@ -4,6 +4,9 @@ import android.graphics.ColorFilter
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.TypedValue
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -13,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_profile.*
 import ru.skillbranch.devintensive.R
 import ru.skillbranch.devintensive.models.Profile
+import ru.skillbranch.devintensive.utils.Utils
 import ru.skillbranch.devintensive.viewmodels.ProfileViewModel
 
 class ProfileActivity : AppCompatActivity() {
@@ -27,6 +31,7 @@ class ProfileActivity : AppCompatActivity() {
     lateinit var viewFields: Map<String, TextView>
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
 
@@ -42,14 +47,36 @@ class ProfileActivity : AppCompatActivity() {
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(ProfileViewModel::class.java)
         viewModel.getProfileData().observe(this, Observer { updateUI(it) })
+        viewModel.getAppTheme().observe(this, Observer { updateTheme(it) })
     }
 
     private fun updateUI(profile: Profile) {
+        val initials = Utils.toInitials(profile.firstName, profile.lastName)
+        if (initials != null) {
+            val tv = TypedValue()
+            theme.resolveAttribute(R.attr.colorAccent, tv, true)
+            val backgroundColor = tv.data
+            iv_avatar.setImageBitmap(
+                Utils.textBitmap(
+                    iv_avatar.layoutParams.width,
+                    iv_avatar.layoutParams.height,
+                    initials,
+                    backgroundColor
+                )
+            )
+        } else {
+            iv_avatar.setImageDrawable(getDrawable(R.drawable.avatar_default))
+        }
+
         profile.toMap().also {
             for ((k, v) in viewFields) {
                 v.text = it[k].toString()
             }
         }
+    }
+
+    private fun updateTheme(mode: Int) {
+        delegate.setLocalNightMode(mode)
     }
 
     private fun initViews(savedInstanceState: Bundle?) {
@@ -74,6 +101,28 @@ class ProfileActivity : AppCompatActivity() {
             isEditMode = !isEditMode
             showCurrentMode(isEditMode)
         }
+        btn_switch_theme.setOnClickListener {
+            viewModel.switchTheme()
+        }
+
+        val repoWatcher = object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                s?.let {
+                    if (Profile.validateRepository(it.toString())) {
+                        wr_repository.error = null
+                        wr_repository.isErrorEnabled = false
+                    } else {
+                        wr_repository.error = getString(R.string.invalid_repo_address_message)
+                    }
+                }
+            }
+
+        }
+        et_repository.addTextChangedListener(repoWatcher)
     }
 
     private fun showCurrentMode(isEdit: Boolean) {
@@ -112,6 +161,9 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun saveProfileInfo() {
+        if (!Profile.validateRepository(et_repository.text.toString())) {
+            et_repository.setText("")
+        }
         Profile(
             firstName = et_first_name.text.toString(),
             lastName = et_last_name.text.toString(),

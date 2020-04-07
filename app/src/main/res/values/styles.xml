@@ -1,23 +1,13 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/color_primary</item>
-        <item name="colorPrimaryDark">@color/color_primary_dark</item>
-        <item name="colorAccent">@color/color_accent</item>
-    </style>
-
-    <style name="Profile">
-
-    </style>
+    <style name="Profile" />
 
     <style name="Profile.EditText" parent="Profile">
-        <item name="android:enabled">false</item>
-        <item name="android:focusable">false</item>
-        <item name="android:focusableInTouchMode">false</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
         <item name="android:paddingTop">4dp</item>
-        <item name="android:textColor">@color/color_primary</item>
+        <item name="android:enabled">false</item>
+        <item name="android:focusableInTouchMode">false</item>
+        <item name="android:focusable">false</item>
     </style>
 
     <style name="Profile.EditText.Single" parent="Profile.EditText">
@@ -58,11 +48,11 @@
     </style>
 
     <style name="Profile.InfoItem">
-        <item name="android:minHeight">72dp</item>
-        <item name="android:paddingLeft">@dimen/spacing_normal_16</item>
         <item name="android:paddingTop">@dimen/spacing_normal_16</item>
-        <item name="android:paddingRight">@dimen/spacing_normal_16</item>
         <item name="android:paddingBottom">5dp</item>
+        <item name="android:paddingLeft">@dimen/spacing_normal_16</item>
+        <item name="android:paddingRight">@dimen/spacing_normal_16</item>
+        <item name="android:minHeight">72dp</item>
     </style>
 
 </resources>
