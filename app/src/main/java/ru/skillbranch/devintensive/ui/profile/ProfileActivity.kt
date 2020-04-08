@@ -51,28 +51,12 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun updateUI(profile: Profile) {
-        val initials = Utils.toInitials(profile.firstName, profile.lastName)
-        if (initials != null) {
-            val tv = TypedValue()
-            theme.resolveAttribute(R.attr.colorAccent, tv, true)
-            val backgroundColor = tv.data
-            iv_avatar.setImageBitmap(
-                Utils.textBitmap(
-                    iv_avatar.layoutParams.width,
-                    iv_avatar.layoutParams.height,
-                    initials,
-                    backgroundColor
-                )
-            )
-        } else {
-            iv_avatar.setImageDrawable(getDrawable(R.drawable.avatar_default))
-        }
-
-        profile.toMap().also {
+       profile.toMap().also {
             for ((k, v) in viewFields) {
                 v.text = it[k].toString()
             }
         }
+        updateAvatar(profile)
     }
 
     private fun updateTheme(mode: Int) {
@@ -112,7 +96,7 @@ class ProfileActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 s?.let {
-                    if (Profile.validateRepository(it.toString())) {
+                    if (Utils.isValidateRepository(it.toString())) {
                         wr_repository.error = null
                         wr_repository.isErrorEnabled = false
                     } else {
@@ -161,7 +145,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun saveProfileInfo() {
-        if (!Profile.validateRepository(et_repository.text.toString())) {
+        if (!Utils.isValidateRepository(et_repository.text.toString())) {
             et_repository.setText("")
         }
         Profile(
@@ -172,5 +156,11 @@ class ProfileActivity : AppCompatActivity() {
         ).apply {
             viewModel.saveProfileData(this)
         }
+    }
+
+    private fun updateAvatar(profile: Profile) {
+        val initials = Utils.toInitials(profile.firstName, profile.lastName)
+        iv_avatar.generateAvatar(initials, Utils.convertSpToPx(this, 48), theme)
+
     }
 }

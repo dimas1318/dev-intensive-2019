@@ -1,5 +1,6 @@
 package ru.skillbranch.devintensive.utils
 
+import android.content.Context
 import android.graphics.*
 import androidx.annotation.ColorInt
 import kotlin.math.min
@@ -106,5 +107,44 @@ object Utils {
         canvas.drawText(text, backgroundBounds.centerX(), textBottom, paint)
 
         return bitmap
+    }
+
+    fun isValidateRepository(repo: String): Boolean = repo.isEmpty() || repo.matches(
+        Regex(
+            "^(https://){0,1}(www.){0,1}github.com\\/[A-z\\d](?:[A-z\\d]|(_|-)(?=[A-z\\d])){0,256}(/)?\$",
+            RegexOption.IGNORE_CASE
+        )
+    ) &&
+            !repo.matches(
+                Regex(
+                    "^.*(" +
+                            "\\/enterprise|" +
+                            "\\/features|" +
+                            "\\/topics|" +
+                            "\\/collections|" +
+                            "\\/trending|" +
+                            "\\/events|" +
+                            "\\/marketplace" +
+                            "|\\/pricing|" +
+                            "\\/nonprofit|" +
+                            "\\/customer-stories|" +
+                            "\\/security|" +
+                            "\\/login|" +
+                            "\\/join)\$", RegexOption.IGNORE_CASE
+                )
+            )
+
+    fun convertSpToPx(context: Context, sp: Int): Int {
+        return sp * context.resources.displayMetrics.scaledDensity.toInt()
+    }
+
+    fun convertDpToPx(context: Context, dp: Int): Int {
+        val scale = context.resources.displayMetrics.density
+        return (dp * scale + 0.5f).toInt()
+    }
+
+    fun convertPxToDp(context: Context, px: Int): Int {
+        val scale = context.resources.displayMetrics.density
+        return (px / scale + 0.5f).toInt()
     }
 }
