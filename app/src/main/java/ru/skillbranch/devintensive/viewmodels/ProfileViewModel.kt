@@ -1,5 +1,6 @@
 package ru.skillbranch.devintensive.viewmodels
 
+import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,6 +12,7 @@ class ProfileViewModel : ViewModel() {
     private val repository: PreferencesRepository = PreferencesRepository
     private val profileData = MutableLiveData<Profile>()
     private val appTheme = MutableLiveData<Int>()
+    private val initialsDrawable = MutableLiveData<Drawable>()
 
     init {
         profileData.value = repository.getProfile()
@@ -20,6 +22,8 @@ class ProfileViewModel : ViewModel() {
     fun getProfileData(): LiveData<Profile> = profileData
 
     fun getAppTheme(): LiveData<Int> = appTheme
+
+    fun getTextInitials(): LiveData<Drawable> = initialsDrawable
 
     fun saveProfileData(profile: Profile) {
         repository.saveProfile(profile)
@@ -33,5 +37,12 @@ class ProfileViewModel : ViewModel() {
             appTheme.value = AppCompatDelegate.MODE_NIGHT_YES
         }
         repository.saveAppTheme(appTheme.value!!)
+    }
+
+    fun updateTextInitials(colorId: Int) {
+        val initials = repository.getInitials()
+        if (initials.first.isNotEmpty() || initials.second.isNotEmpty()) {
+            initialsDrawable.value = repository.getTextInitials(initials, colorId)
+        }
     }
 }

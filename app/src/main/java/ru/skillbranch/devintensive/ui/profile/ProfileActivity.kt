@@ -48,6 +48,7 @@ class ProfileActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(ProfileViewModel::class.java)
         viewModel.getProfileData().observe(this, Observer { updateUI(it) })
         viewModel.getAppTheme().observe(this, Observer { updateTheme(it) })
+        viewModel.getTextInitials().observe(this, Observer { iv_avatar.setImageDrawable(it) })
     }
 
     private fun updateUI(profile: Profile) {
@@ -56,7 +57,8 @@ class ProfileActivity : AppCompatActivity() {
                 v.text = it[k].toString()
             }
         }
-        updateAvatar(profile)
+
+        viewModel.updateTextInitials(getAccentColor())
     }
 
     private fun updateTheme(mode: Int) {
@@ -158,9 +160,9 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun updateAvatar(profile: Profile) {
-        val initials = Utils.toInitials(profile.firstName, profile.lastName)
-        iv_avatar.generateAvatar(initials, Utils.convertSpToPx(this, 48), theme)
-
+    private fun getAccentColor(): Int {
+        val tv = TypedValue()
+        theme.resolveAttribute(R.attr.colorAccent, tv, true)
+        return tv.data
     }
 }
