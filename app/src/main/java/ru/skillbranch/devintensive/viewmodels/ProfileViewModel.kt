@@ -39,10 +39,12 @@ class ProfileViewModel : ViewModel() {
         repository.saveAppTheme(appTheme.value!!)
     }
 
-    fun updateTextInitials(colorId: Int) {
+    fun updateTextInitials(colorId: Int, defaultImage: Drawable) {
         val initials = repository.getInitials()
         if (initials.first.isNotEmpty() || initials.second.isNotEmpty()) {
             initialsDrawable.value = repository.getTextInitials(initials, colorId)
+        } else {
+            initialsDrawable.value = defaultImage
         }
     }
 }

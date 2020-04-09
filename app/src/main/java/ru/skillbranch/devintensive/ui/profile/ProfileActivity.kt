@@ -58,7 +58,8 @@ class ProfileActivity : AppCompatActivity() {
             }
         }
 
-        viewModel.updateTextInitials(getAccentColor())
+        viewModel.updateTextInitials(getAccentColor(),
+            resources.getDrawable(R.drawable.avatar_default, theme))
     }
 
     private fun updateTheme(mode: Int) {
