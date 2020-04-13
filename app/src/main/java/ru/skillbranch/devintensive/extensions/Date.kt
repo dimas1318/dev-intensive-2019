@@ -10,6 +10,18 @@ fun Date.format(pattern: String = "HH:mm:ss dd.MM.yy"): String {
     return dateFormat.format(this)
 }
 
+fun Date.shortFormat(): String {
+    val pattern = if (this.isSameDay(Date())) "HH:mm" else "dd.MM.yy"
+    val dateFormat = SimpleDateFormat(pattern, Locale("ru"))
+    return dateFormat.format(this)
+}
+
+fun Date.isSameDay(date: Date): Boolean {
+    val day1 = this.time / DAY.value
+    val day2 = date.time / DAY.value
+    return day1 == day2
+}
+
 fun Date.add(value: Int, units: TimeUnits = SECOND): Date {
     this.time += units.value * value
     return this
@@ -23,7 +35,10 @@ fun Date.humanizeDiff(date: Date = Date()): String {
         dif <= SECOND.value -> "только что"
         dif <= SECOND.value * 45 -> getTenseForm("несколько секунд", isPast)
         dif <= SECOND.value * 75 -> getTenseForm("минуту", isPast)
-        dif <= MINUTE.value * 45 -> getTenseForm(MINUTE.plural((dif / MINUTE.value).toInt()), isPast)
+        dif <= MINUTE.value * 45 -> getTenseForm(
+            MINUTE.plural((dif / MINUTE.value).toInt()),
+            isPast
+        )
         dif <= MINUTE.value * 75 -> getTenseForm("час", isPast)
         dif <= HOUR.value * 22 -> getTenseForm(HOUR.plural((dif / HOUR.value).toInt()), isPast)
         dif <= HOUR.value * 26 -> getTenseForm("день", isPast)

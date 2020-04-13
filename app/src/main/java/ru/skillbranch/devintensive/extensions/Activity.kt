@@ -30,3 +30,5 @@ fun Activity.isKeyboardOpen(): Boolean {
 fun Activity.isKeyboardClosed(): Boolean {
     return this.isKeyboardOpen().not()
 }
+
+fun Activity.convertPxToDp(px: Float): Float = px / resources.displayMetrics.density
