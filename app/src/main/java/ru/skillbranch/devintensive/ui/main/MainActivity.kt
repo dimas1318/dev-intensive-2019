@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initToolbar() {
-//        setSupportActionBar(toolbar)
+        setSupportActionBar(toolbar)
     }
 
     private fun initViews() {
