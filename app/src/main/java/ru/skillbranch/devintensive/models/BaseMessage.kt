@@ -4,9 +4,6 @@ import ru.skillbranch.devintensive.models.data.Chat
 import ru.skillbranch.devintensive.models.data.User
 import java.util.*
 
-/**
- * Created by Makweb on 24.06.2019.
- */
 abstract class BaseMessage(
     val id: String,
     val from: User,
@@ -14,5 +11,25 @@ abstract class BaseMessage(
     val isIncoming: Boolean = true,
     val date: Date = Date(),
     var isReaded: Boolean = false
+) {
+    abstract fun formatMessage(): String
+    abstract fun shortMessage(): String
 
-)
+    companion object AbstractFactory {
+        var lastId = -1;
+        fun makeMessage(
+            from: User,
+            chat: Chat,
+            date: Date = Date(),
+            type: String = "test",
+            payload: Any?
+        ): BaseMessage {
+            lastId++
+            return when (type) {
+                "image" -> ImageMessage("$lastId", from, chat, date = date, image = payload as String)
+                else -> TextMessage("$lastId", from, chat, date = date, text = payload as String)
+            }
+        }
+
+    }
+}
