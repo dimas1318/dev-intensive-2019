@@ -1,6 +1,6 @@
 package ru.skillbranch.devintensive.viewmodels
 
-import android.graphics.drawable.Drawable
+import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,18 +12,22 @@ class ProfileViewModel : ViewModel() {
     private val repository: PreferencesRepository = PreferencesRepository
     private val profileData = MutableLiveData<Profile>()
     private val appTheme = MutableLiveData<Int>()
-    private val initialsDrawable = MutableLiveData<Drawable>()
 
     init {
+        Log.d("M_ProfileViewModel", "init view model")
         profileData.value = repository.getProfile()
         appTheme.value = repository.getAppTheme()
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("M_ProfileViewModel", "view model cleared")
+    }
+
+
     fun getProfileData(): LiveData<Profile> = profileData
 
-    fun getAppTheme(): LiveData<Int> = appTheme
-
-    fun getTextInitials(): LiveData<Drawable> = initialsDrawable
+    fun getTheme(): LiveData<Int> = appTheme
 
     fun saveProfileData(profile: Profile) {
         repository.saveProfile(profile)
@@ -39,12 +43,4 @@ class ProfileViewModel : ViewModel() {
         repository.saveAppTheme(appTheme.value!!)
     }
 
-    fun updateTextInitials(colorId: Int, defaultImage: Drawable) {
-        val initials = repository.getInitials()
-        if (initials.first.isNotEmpty() || initials.second.isNotEmpty()) {
-            initialsDrawable.value = repository.getTextInitials(initials, colorId)
-        } else {
-            initialsDrawable.value = defaultImage
-        }
-    }
 }

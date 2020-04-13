@@ -1,14 +1,10 @@
 package ru.skillbranch.devintensive.repositories
 
 import android.content.SharedPreferences
-import android.graphics.drawable.Drawable
 import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatDelegate
 import ru.skillbranch.devintensive.App
-import ru.skillbranch.devintensive.R
 import ru.skillbranch.devintensive.models.Profile
-import ru.skillbranch.devintensive.models.TextDrawable
-import ru.skillbranch.devintensive.utils.Utils
 
 object PreferencesRepository {
 
@@ -25,22 +21,13 @@ object PreferencesRepository {
         PreferenceManager.getDefaultSharedPreferences(ctx)
     }
 
-    fun saveAppTheme(appTheme: Int) {
-        putValue(APP_THEME to appTheme)
+    fun saveAppTheme(theme: Int) {
+        putValue(APP_THEME to theme)
     }
 
-    fun saveProfile(profile: Profile) {
-        with(profile) {
-            putValue(FIRST_NAME to firstName)
-            putValue(LAST_NAME to lastName)
-            putValue(ABOUT to about)
-            putValue(REPOSITORY to repository)
-            putValue(RATING to rating)
-            putValue(RESPECT to respect)
-        }
-    }
+    fun getAppTheme():Int = prefs.getInt(APP_THEME, AppCompatDelegate.MODE_NIGHT_NO)
 
-    fun getAppTheme(): Int = prefs.getInt(APP_THEME, AppCompatDelegate.MODE_NIGHT_NO)
+
 
     fun getProfile(): Profile = Profile(
         prefs.getString(FIRST_NAME, "")!!,
@@ -51,37 +38,30 @@ object PreferencesRepository {
         prefs.getInt(RESPECT, 0)
     )
 
-    private fun putValue(pair: Pair<String, Any>) = with(prefs.edit()) {
+    fun saveProfile(profile: Profile) {
+        with(profile) {
+            putValue(FIRST_NAME to firstName )
+            putValue(LAST_NAME to lastName )
+            putValue(ABOUT to about )
+            putValue(REPOSITORY to repository )
+            putValue(RATING to rating )
+            putValue(RESPECT to respect )
+        }
+    }
+
+    private fun putValue(pair: Pair<String, Any>) = with (prefs.edit()){
         val key = pair.first
         val value = pair.second
 
-        when (value) {
+        when (value){
             is String -> putString(key, value)
             is Int -> putInt(key, value)
             is Boolean -> putBoolean(key, value)
             is Long -> putLong(key, value)
             is Float -> putFloat(key, value)
-            else -> error("Only primitive types can be stored in shared preferences!")
+            else -> error("Only primitives types can be stored in Shared Preferences")
         }
         apply()
     }
 
-    fun getInitials(): Pair<String, String> {
-        return prefs.getString(FIRST_NAME, "")!! to prefs.getString(LAST_NAME, "")!!
-    }
-
-    fun getTextInitials(initials: Pair<String, String>, colorId: Int): Drawable {
-        return textDrawable(Utils.toInitials(initials.first, initials.second)!!, colorId)
-    }
-
-    private fun textDrawable(initials: String, colorId: Int): Drawable {
-        return TextDrawable
-            .builder()
-            .beginConfig()
-            .width(App.applicationContext().resources.getDimension(R.dimen.avatar_round_size).toInt())
-            .height(App.applicationContext().resources.getDimension(R.dimen.avatar_round_size).toInt())
-            .fontSize(Utils.convertSpToPx(App.applicationContext(), 48))
-            .endConfig()
-            .buildRound(initials, colorId)
-    }
 }
